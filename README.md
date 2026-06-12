@@ -1,109 +1,163 @@
-<!-- Line 1: Main Project Title -->
-# Cricket Score Tracker - Full Stack Database Edition
+# Cricket Score Tracker - MERN Full Stack Edition
 
-<!-- Line 2: Description of the project's purpose and functionality -->
-A full-stack React-Express-MongoDB application designed to create, track, score, and persist cricket matches in real-time.
+A production-ready full-stack MERN application built with React, Node.js, Express, and MongoDB (Atlas & Mongoose) to create, track, score, and persist cricket matches in real-time.
 
-<!-- Line 3: Section heading for Project Architecture -->
-## Project Architecture
+Features a responsive glassmorphic UI, custom batting/bowling statistics tracking, automated target chasing logic, and historical match logs with collapsible scorecard accordions.
 
-<!-- Line 4: Description of the React frontend role -->
-- **Client (Frontend)**: React 19 app structured with reusable page components and React Router (v7) navigation.
-<!-- Line 5: Description of the Express backend server role -->
-- **Server (Backend)**: Express API server acting as the bridge between the client and the database.
-<!-- Line 6: Description of the database persistence layer -->
-- **Database (Persistence)**: MongoDB database utilizing Mongoose for schema declaration and validation.
+---
 
-<!-- Line 7: Section heading for Tech Stack -->
-## Tech Stack
+## 1. Project Architecture
 
-<!-- Line 8: Technical details of Frontend technologies -->
-- **Frontend**: React, React Router DOM, Vanilla CSS (Glassmorphism design tokens)
-<!-- Line 9: Technical details of Backend technologies -->
-- **Backend**: Node.js, Express, Mongoose, CORS, nodemon
-<!-- Line 10: Technical details of Database configuration -->
-- **Database**: MongoDB (Local server instance running on port `2004`)
-<!-- Line 11: Technical details of Dev environment utility -->
-- **Dev Tooling**: `concurrently` (boots up client and server servers in parallel with a single command)
+The project is structured as a decoupled client-server architecture:
 
-<!-- Line 12: Section heading for Database Schema Details -->
-## MongoDB Schema Description
+- **Client (Frontend)**: React 19 single-page application styled using custom CSS tokens (Glassmorphic design). Uses React Router (v7) for application routing and navigation.
+- **Server (Backend)**: Production Express.js server hosted under `server/` providing secure RESTful API endpoints, request validation, and global error handling.
+- **Database (Persistence)**: MongoDB instance (local or MongoDB Atlas Cloud) using Mongoose for object modeling, type-safety, and validation schemas.
 
-<!-- Line 13: Introduction to the Match document schema structure -->
-Matches are stored as structured documents in the `matches` collection under the `cricket_tracker` database:
+---
 
-<!-- Line 14: Bullet point explaining basic match meta information -->
-- **Match Setup Info**: Team names, total overs, toss winner name, toss decision ('Bat'/'Bowl'), player rosters.
-<!-- Line 15: Bullet point explaining scorecard statistics structure -->
-- **Innings 1 & 2 Details**: Runs, wickets, balls, and list of player statistics.
-<!-- Line 16: Bullet point explaining batter details -->
-  - **Batters**: Runs scored, balls faced, fours hit, sixes hit, strike rate.
-<!-- Line 17: Bullet point explaining bowler details -->
-  - **Bowlers**: Overs bowled, runs conceded, wickets taken, extras conceded.
-<!-- Line 18: Bullet point explaining match outcome -->
-- **Result Description**: Summary of victory margins (e.g. "India won by 4 wickets!").
+## 2. Tech Stack
 
-<!-- Line 19: Section heading for Backend API Endpoints -->
-## API Endpoints
+- **Frontend**: React 19, React Router DOM v7, CSS Custom Properties (harmonious dark/glassmorphic color palette)
+- **Backend**: Node.js, Express.js, Mongoose, CORS, Dotenv, nodemon
+- **Database**: MongoDB (Atlas Cloud for production, local `mongodb://127.0.0.1:27017/cricket_tracker` for development)
+- **Dev Tooling**: `concurrently` (runs frontend client and backend server in parallel with a single command)
 
-<!-- Line 20: Express route mapping for creating a match -->
-- `POST /api/matches`: Persists a completed match document to the database.
-<!-- Line 21: Express route mapping for listing matches -->
-- `GET /api/matches`: Retrieves all recorded matches from history, sorted by creation timestamp (newest first).
-<!-- Line 22: Express route mapping for deleting a match -->
-- `DELETE /api/matches/:id`: Removes a specific match log from the database collection.
+---
 
-<!-- Line 23: Section heading for Setup & Running instructions -->
-## Getting Started
+## 3. Directory Structure
 
-<!-- Line 24: Pre-requisites notice for local MongoDB service -->
-### Prerequisites
-<!-- Line 25: Warning to ensure local MongoDB server is active -->
-Ensure MongoDB is running locally on your system. By default, it connects to:
-<!-- Line 26: Connection URL definition for MongoDB -->
-`mongodb://127.0.0.1:2004/cricket_tracker`
-
-<!-- Line 27: Heading for installing package dependencies -->
-### Installation
-<!-- Line 28: Instruction to install workspace modules -->
-Install all required package dependencies in the workspace root directory:
-<!-- Line 29: Command block showing standard npm install -->
-```bash
-npm install
+```text
+cricket/
+├── build/                       # Production React build directory
+├── public/                      # Static client assets
+├── server/                      # Express Backend Subsystem
+│   ├── config/
+│   │   └── db.js                # Database connection using Mongoose
+│   ├── controllers/
+│   │   └── matchController.js   # Match REST route handlers
+│   ├── middleware/
+│   │   └── errorHandler.js      # Centralized JSON error response handler
+│   ├── models/
+│   │   └── Match.js             # Mongoose match, innings, and stats schemas
+│   ├── routes/
+│   │   └── matchRoutes.js       # Match routes mapping
+│   ├── utils/
+│   │   └── validators.js        # Payload schema validation helpers
+│   ├── .env.example             # Environment variable template
+│   ├── package.json             # Backend dependencies and scripts
+│   └── server.js                # Express entry point
+├── src/                         # React Frontend Subsystem
+│   ├── pages/
+│   │   ├── Home.jsx             # Welcome & navigation page
+│   │   ├── Match.jsx            # Teams and settings setup
+│   │   ├── TeamRoster.jsx       # Player list builder
+│   │   ├── Scoreboard.jsx       # Real-time over scorer & automated DB saving
+│   │   └── MatchHistory.jsx     # Accordion scoreboard database explorer
+│   ├── App.css                  # UI Styles (tokens, layout, responsive grid)
+│   ├── App.js                   # Application client routes
+│   └── index.js                 # Frontend entry point
+├── package.json                 # Monorepo/Root scripts & dev dependencies
+└── README.md                    # Main Project Documentation
 ```
 
-<!-- Line 30: Heading for booting development server environments -->
-### Running the Application
-<!-- Line 31: Instruction to run the dev script -->
-Launch both the Express backend and React frontend concurrently in development mode:
-<!-- Line 32: Command block showing npm start -->
+---
+
+## 4. Database Schema
+
+Matches are saved in the `matches` collection under a structured document model:
+
+- **Match Meta**: Team names, total overs, toss winner name, toss choice (`Bat` or `Bowl`), player rosters (`players.team1` and `players.team2` arrays).
+- **Innings (1 & 2)**: Total runs, wickets, valid balls bowled, and statistical lists.
+  - **Batter Stats**: Name, runs scored, balls faced, fours hit, sixes hit, strike rate (derived).
+  - **Bowler Stats**: Name, overs bowled (format `O.B`), runs conceded, wickets taken, extras conceded.
+- **Outcome Summary**: Formulated text string detailing the victory margins or ties.
+- **Timestamps**: Match creation timestamp (`createdAt`).
+
+---
+
+## 5. REST API Endpoints
+
+Base URL: `/api/matches`
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| **GET** | `/api/matches` | Get all recorded matches sorted by `createdAt` descending |
+| **GET** | `/api/matches/:id` | Retrieve detailed statistics of a single match by ID |
+| **POST** | `/api/matches` | Save completed match statistics (validates payload) |
+| **PUT** | `/api/matches/:id` | Update an existing match record by ID |
+| **DELETE** | `/api/matches/:id` | Delete a match record from database history |
+
+---
+
+## 6. Environment Variables
+
+### Backend Configuration (`server/.env`)
+Create a `.env` file in the `server/` directory:
+```ini
+PORT=5000
+NODE_ENV=production
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/cricket_tracker?retryWrites=true&w=majority
+FRONTEND_URL=https://cricket-score-tracker-rho.vercel.app
+```
+
+### Frontend Configuration
+Vercel dashboard or root environment variable:
+```ini
+REACT_APP_API_URL=https://cricket-score-tracker-backend.onrender.com
+```
+
+---
+
+## 7. Getting Started (Local Development)
+
+### 1. Prerequisites
+- **Node.js** (v18 or higher recommended)
+- **MongoDB** running locally. The default connection URI is:
+  `mongodb://127.0.0.1:27017/cricket_tracker`
+
+### 2. Installation
+Install root dependencies and backend dependencies:
+```bash
+# Install root (concurrently, nodemon) and React frontend dependencies
+npm install
+
+# Install backend dependencies
+cd server
+npm install
+cd ..
+```
+
+### 3. Running the App
+Start both frontend and backend servers concurrently:
 ```bash
 npm start
 ```
-<!-- Line 33: Explanation of port assignments for dev servers -->
-The frontend will open at [http://localhost:3000](http://localhost:3000), and the backend server runs at [http://localhost:5000](http://localhost:5000).
+- **Frontend** runs on [http://localhost:3000](http://localhost:3000)
+- **Backend API** runs on [http://localhost:5000](http://localhost:5000)
 
-<!-- Line 34: Section heading for file and directory structure -->
-## File Structure
+---
 
-<!-- Line 35: File structure outline block -->
-```text
-cricket/
-├── server.js               # Express application entrypoint and DB configuration
-├── server/
-│   └── models/
-│       └── Match.js        # Mongoose database schemas (Match and Innings)
-├── src/
-│   ├── App.js              # React Router route registry
-│   ├── App.css             # Unified CSS design systems and page styles
-│   └── pages/
-│       ├── Home.jsx        # Landing page with Start Match and Match History buttons
-│       ├── Match.jsx       # Match parameters builder configuration
-│       ├── TeamRoster.jsx  # Player names entries for both squads
-│       ├── Scoreboard.jsx  # Over-by-over scorer with auto-save MongoDB hook
-│       └── MatchHistory.jsx# Database explorer with scorecard accordion lists
-└── package.json            # Scripts and package dependency declarations
-```
+## 8. Deployment Settings
 
-<!-- Line 36: Footer citation of author/student -->
+### Database (MongoDB Atlas)
+1. Set up a cluster on MongoDB Atlas.
+2. Whitelist connection IP addresses (`0.0.0.0/0` for cloud deployment compatibility).
+3. Copy connection driver URI and use as `MONGODB_URI` environment variable.
+
+### Backend (Render)
+- **Root Directory**: `server`
+- **Build Command**: `npm install`
+- **Start Command**: `node server.js`
+- Set env variables: `MONGODB_URI`, `FRONTEND_URL`, and `NODE_ENV`.
+
+### Frontend (Vercel)
+- **Framework Preset**: `Create React App`
+- **Root Directory**: `./`
+- **Build Command**: `npm run build`
+- **Output Directory**: `build`
+- Add environment variable: `REACT_APP_API_URL` (set to Render backend URL).
+
+---
+
 **Project Creator**: Chandan S (PES1PG25CA269)

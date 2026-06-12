@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+const API_URL = process.env.REACT_APP_API_URL || '';
+
 /**
  * Scoreboard Component
  * 
@@ -200,7 +202,7 @@ function Scoreboard() {
       };
 
       // POST final match records to backend API using native driver handlers
-      fetch('/api/matches', {
+      fetch(`${API_URL}/api/matches`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
