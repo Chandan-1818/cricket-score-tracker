@@ -97,7 +97,7 @@ Create a `.env` file in the `server/` directory:
 ```ini
 PORT=5000
 NODE_ENV=production
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/cricket_tracker?retryWrites=true&w=majority
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/cricket_tracker?retryWrites=true&w=majority
 FRONTEND_URL=https://cricket-score-tracker-rho.vercel.app
 ```
 
@@ -143,13 +143,13 @@ npm start
 ### Database (MongoDB Atlas)
 1. Set up a cluster on MongoDB Atlas.
 2. Whitelist connection IP addresses (`0.0.0.0/0` for cloud deployment compatibility).
-3. Copy connection driver URI and use as `MONGODB_URI` environment variable.
+3. Copy connection driver URI and use as `MONGO_URI` environment variable.
 
 ### Backend (Render)
 - **Root Directory**: `server`
 - **Build Command**: `npm install`
 - **Start Command**: `node server.js`
-- Set env variables: `MONGODB_URI`, `FRONTEND_URL`, and `NODE_ENV`.
+- Set env variables: `MONGO_URI`, `FRONTEND_URL`, and `NODE_ENV`.
 
 ### Frontend (Vercel)
 - **Framework Preset**: `Create React App`
