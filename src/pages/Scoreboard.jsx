@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-
-const API_URL = process.env.REACT_APP_API_URL || '';
+import { saveMatch } from '../services/api'
 
 /**
  * Scoreboard Component
@@ -202,19 +201,7 @@ function Scoreboard() {
       };
 
       // POST final match records to backend API using native driver handlers
-      fetch(`${API_URL}/api/matches`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(matchPayload)
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to save match details');
-          }
-          return response.json();
-        })
+      saveMatch(matchPayload)
         .then(() => {
           setDbSaveStatus('saved');
         })

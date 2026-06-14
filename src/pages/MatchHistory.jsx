@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-const API_URL = process.env.REACT_APP_API_URL || '';
+import { fetchMatches, deleteMatchById } from '../services/api'
 
 /**
  * MatchHistory Component
@@ -24,13 +23,7 @@ function MatchHistory() {
    * Effect Hook: Fetches match records from the database on component mount.
    */
   useEffect(() => {
-    fetch(`${API_URL}/api/matches`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch match history')
-        }
-        return response.json()
-      })
+    fetchMatches()
       .then(data => {
         setMatches(data)
         setLoading(false)
@@ -55,13 +48,8 @@ function MatchHistory() {
     }
 
     // Call DELETE API mapping to native MongoDB handlers
-    fetch(`${API_URL}/api/matches/${id}`, {
-      method: 'DELETE'
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to delete match')
-        }
+    deleteMatchById(id)
+      .then(() => {
         // Remove item from UI state upon successful database deletion
         setMatches(prev => prev.filter(m => m._id !== id))
         
